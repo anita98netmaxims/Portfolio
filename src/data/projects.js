@@ -16,6 +16,9 @@ export const projects = [
     description:
       "Employee Management application for 8500+ employees across India.",
 
+    longDescription:
+      "MyCPM is the internal HR & workforce app used company-wide, live on the Play Store with a 4.4★ rating and 10K+ downloads. Employees use it to mark geo-verified attendance, view leave records (Casual / Earned / Sick), download payslips, raise PF & medical claims, and take part in company surveys. Recent updates added multi-office attendance marking, a work-hours tracker, and a profile photo preview flow.",
+
     images: [mycpm1, mycpm2],
 
     tech: [
@@ -25,6 +28,8 @@ export const projects = [
       "Firebase",
       "REST API",
     ],
+
+    live: "https://play.google.com/store/apps/details?id=com.cpminit.MYCPMAPP&hl=en_IN",
   },
 
   {

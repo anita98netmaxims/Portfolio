@@ -1,3 +1,5 @@
+import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import {
   FaEnvelope,
@@ -8,6 +10,85 @@ import {
 } from "react-icons/fa";
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const [status, setStatus] = useState({
+    type: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const sendEmail = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim()
+    ) {
+      setStatus({
+        type: "error",
+        message: "Please fill all fields.",
+      });
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      setStatus({
+        type: "success",
+        message: "Message sent successfully.",
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (err) {
+      console.log(err);
+
+      setStatus({
+        type: "error",
+        message: "Failed to send message.",
+      });
+    } finally {
+      setLoading(false);
+
+      setTimeout(() => {
+        setStatus({
+          type: "",
+          message: "",
+        });
+      }, 4000);
+    }
+  };
+
   return (
     <section
       id="contact"
@@ -64,7 +145,7 @@ function Contact() {
               {
                 icon: <FaPhoneAlt />,
                 title: "Phone",
-                value: "+91 95********",
+                value: "+91 9599672796",
               },
               {
                 icon: <FaMapMarkerAlt />,
@@ -119,7 +200,7 @@ function Contact() {
             <div className="flex gap-5 pt-6">
 
               <a
-                href="https://linkedin.com"
+                href="https://linkedin.com/in/YOUR-LINKEDIN"
                 target="_blank"
                 rel="noreferrer"
                 className="
@@ -135,9 +216,11 @@ function Contact() {
 
                   bg-white
                   border-slate-200
+                  text-slate-900
 
                   dark:bg-slate-900
                   dark:border-slate-800
+                  dark:text-white
 
                   hover:bg-blue-600
                   hover:text-white
@@ -148,7 +231,7 @@ function Contact() {
               </a>
 
               <a
-                href="https://github.com"
+                href="https://github.com/YOUR-GITHUB"
                 target="_blank"
                 rel="noreferrer"
                 className="
@@ -164,9 +247,11 @@ function Contact() {
 
                   bg-white
                   border-slate-200
+                  text-slate-900
 
                   dark:bg-slate-900
                   dark:border-slate-800
+                  dark:text-white
 
                   hover:bg-blue-600
                   hover:text-white
@@ -183,6 +268,7 @@ function Contact() {
           {/* RIGHT */}
 
           <motion.form
+            onSubmit={sendEmail}
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -192,8 +278,6 @@ function Contact() {
               border
               shadow-xl
               space-y-6
-              transition-all
-              duration-300
 
               bg-white
               border-slate-200
@@ -202,10 +286,13 @@ function Contact() {
               dark:border-slate-800
             "
           >
-
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               placeholder="Your Name"
+              required
               className="
                 w-full
                 rounded-xl
@@ -234,7 +321,11 @@ function Contact() {
 
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Your Email"
+              required
               className="
                 w-full
                 rounded-xl
@@ -263,7 +354,11 @@ function Contact() {
 
             <textarea
               rows={6}
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               placeholder="Your Message"
+              required
               className="
                 w-full
                 rounded-xl
@@ -291,8 +386,21 @@ function Contact() {
               "
             />
 
+            {status.message && (
+              <div
+                className={`rounded-xl px-4 py-3 text-sm font-medium ${
+                  status.type === "success"
+                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                }`}
+              >
+                {status.message}
+              </div>
+            )}
+
             <button
               type="submit"
+              disabled={loading}
               className="
                 w-full
                 py-4
@@ -304,9 +412,11 @@ function Contact() {
                 hover:scale-[1.02]
                 transition-all
                 duration-300
+                disabled:opacity-50
+                disabled:cursor-not-allowed
               "
             >
-              Send Message →
+              {loading ? "Sending..." : "Send Message →"}
             </button>
 
           </motion.form>

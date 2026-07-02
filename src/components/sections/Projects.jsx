@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { projects } from "../../data/projects";
 import ProjectCard from "./ProjectCard";
+import ProjectModal from "../ProjectModal";
 
 function Projects() {
+  const [selectedProject, setSelectedProject] = useState(null);
+
   return (
     <section
       id="projects"
@@ -52,12 +56,19 @@ function Projects() {
             <ProjectCard
               key={project.id}
               project={project}
+              onViewDetails={() => setSelectedProject(project)}
             />
           ))}
 
         </div>
 
       </div>
+
+      {/* Modal renders here, controlled by selectedProject state */}
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </section>
   );
 }

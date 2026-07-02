@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ProjectCard({ project }) {
   const [currentImage, setCurrentImage] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!project.images?.length) return;
@@ -131,6 +133,7 @@ function ProjectCard({ project }) {
         {/* Button */}
 
         <button
+          onClick={() => navigate(`/project/${project.id}`)}
           className="
             mt-8
             flex
